@@ -1,26 +1,44 @@
-import React from 'react';
+import React,{useState} from 'react';
 import logo from './logo.svg';
 import './App.css';
+import TodoList from './Components/TodoList'
+import AddTodo from './Components/AddTodo'
+import { connect } from 'react-redux';
+import * as actions from './Store/actions'
+function App(props) {
+  const [course,setCourse] = useState('');
 
-function App() {
+  const AddCourse = () => {
+    const CourseObj = {
+      id: Math.random(),
+      course: course,
+      creditHour: 3,
+      day: 'Mon'
+    }
+    //calling the dispatch funtion in line 36
+    props.AddCourse(CourseObj);
+
+    setCourse('');
+  }
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+     <TodoList />
+     <AddTodo
+      name="course"
+      value={course}
+      onChange={(e) => setCourse(e.target.value)}  //taking care of the input value and set in state
+      addCourse={AddCourse} //calling AddCourse funtion from AddTodo Component
+     />
     </div>
   );
 }
 
-export default App;
+const mapDispatchToProps = dispatch => {
+  return{
+    AddCourse: (CourseObj) => dispatch(actions.addCourse(CourseObj)) //calling addCourse action and passing CourseObj to it
+  }
+}
+
+const connectedComponent = connect(null,mapDispatchToProps);
+
+export default connectedComponent(App);
